@@ -1,0 +1,4 @@
+KEYMAP = dan
+SLEEP_LED_ENABLE = yes
+
+include Makefile
