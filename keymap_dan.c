@@ -21,21 +21,21 @@ const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      * ,---------------------------------------------------------------.
      * |Esc|  1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =| Backsp|Ins|
      * |---------------------------------------------------------------|
-     * |Tab  |  Q|  W|  E|  R|  T|  Y|  U|  I|  O|  P|  [|  ]|Enter|Del|
+     * |Tab  |  Q|  W|  E|  R|  T|  Y|  U|  I|  O|  P|  [|  ]|Enter|PgU|
      * |------------------------------------------------------`    |---|
-     * |Fn5   |  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|  \|    |PgU|
+     * |Fn5   |  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|  \|    |PgD|
      * |---------------------------------------------------------------|
-     * |Shif|  #|  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift |Up |PgD|
+     * |Shif|  #|  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift |Up |Hom|
      * |---------------------------------------------------------------|
-     * |Fn2  |  Gui|  Fn6|          Fn0        |Fn7|Fn8|Alt|Lef|Dow|Rig|
+     * |Fn2  |  Alt|  Fn6|          Fn0        |Fn7|Fn8|Gui|Lef|Dow|Rig|
      * `---------------------------------------------------------------'
      */
     [0] = KEYMAP_ISO( \
         ESC, 1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   MINS, EQL, BSPC,    DEL, \
-        TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,          END, \
-        FN5, A,   S,   D,   F,   G,   H,   J,   K,   L,   SCLN,QUOT,NUHS,     ENT, PGUP,\
-        LSFT,FN1, Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,RSFT,     UP,  PGDN,\
-        FN2, LGUI,FN6,                FN0,           FN7, FN8, RALT,     LEFT,DOWN,RGHT \
+        TAB, Q,   W,   E,   R,   T,   Y,   U,   I,   O,   P,   LBRC,RBRC,          PGUP,\
+        FN5, A,   S,   D,   F,   G,   H,   J,   K,   L,   SCLN,QUOT,NUHS,     ENT, PGDN,\
+        LSFT,FN1, Z,   X,   C,   V,   B,   N,   M,   COMM,DOT, SLSH,RSFT,     UP,  HOME,\
+        FN2,LALT, FN6,                FN0,           FN7, FN8, RGUI,     LEFT,DOWN,RGHT \
     ),
     /* Layer 1: HHKB mode (Space)
      * ,---------------------------------------------------------------.
@@ -69,7 +69,7 @@ enum macro_id {
 };
 
 enum function_id {
-    CMD_TAB_ALT,
+    CMD_TAB_CMD,
 };
 
 /*
@@ -86,7 +86,7 @@ const action_t fn_actions[] PROGMEM = {
     [3]  = ACTION_LAYER_TAP_KEY(2, MOD_RCTL),          // wasd mouse mode
     [4]  = ACTION_MODS_KEY(MOD_LSFT, KC_GRV),          // tilde
     [5]  = ACTION_MODS_TAP_KEY(MOD_LCTL, KC_F19),      // alfred
-    [6]  = ACTION_FUNCTION_TAP(CMD_TAB_ALT),           // tap cmd tab or alt
+    [6]  = ACTION_FUNCTION_TAP(CMD_TAB_CMD),           // tap cmd tab or cmd
     [7]  = ACTION_MACRO(CMD_GRAVE),                    // grave tab
     [8]  = ACTION_MACRO(CTRL_A),                       // ctrl a
     [9]  = ACTION_MACRO(CMD_ALT_C),                    // cmd alt c
@@ -135,21 +135,21 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
     switch (id) {
-        case CMD_TAB_ALT:
+        case CMD_TAB_CMD:
             if (record->event.pressed) {
                 if (record->tap.count > 0 && !record->tap.interrupted) {
                     if (record->tap.interrupted) {
-                        register_mods(MOD_BIT(KC_LALT));
+                        register_mods(MOD_BIT(KC_LGUI));
                     }
                 } else {
-                    register_mods(MOD_BIT(KC_LALT));
+                    register_mods(MOD_BIT(KC_LGUI));
                 }
             } else {
                 if (record->tap.count > 0 && !(record->tap.interrupted)) {
                     action_macro_play(MACRO( D(LGUI), T(TAB), U(LGUI), END ));
                     record->tap.count = 0;  // ad hoc: cancel tap
                 } else {
-                    unregister_mods(MOD_BIT(KC_LALT));
+                    unregister_mods(MOD_BIT(KC_LGUI));
                 }
             }
             break;
